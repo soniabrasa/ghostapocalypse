@@ -4,36 +4,49 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    // Los prefabs
     public GameObject ghostPrefab;
     public GameObject gameOverPrefab;
     public GameObject vidasPrefab;
+
+    // El objeto jugador
     public GameObject barrera;
 
+    // El tablero de juego
     public Transform[] spawnPoints;
     public Transform[] marcadorPoints;
     public Transform[] board;
 
-    private GameObject ghostClone;
-    private GameObject vidaClone;
-    private List<GameObject> ghostClones = new List<GameObject>();
-    // private List<GameObject> vidasClones = new List<GameObject>();
-    // private GameObject[] vidasClones = new GameObject[4];
-    private int enemigos, neutralizados, perdidos, vidas;
-    private float borderTop, borderRight, borderBottom;
-    private bool play;
-    private string nameGhost, nameVida;
+    // Los clones de prefabs
+    GameObject ghostClone;
+    GameObject vidaClone;
+    List<GameObject> ghostClones = new List<GameObject>();
+    string nameGhost, nameVida;
 
-    // Al inicio del juego
+    // Marcadores
+    int enemigos, neutralizados, perdidos, vidas;
+
+    // Bordes del tablero
+    float borderTop, borderRight, borderBottom;
+
+    // Fin del juego
+    bool gameOver;
+
+    // Booleano publico de sólo lectura
+    public bool GameOver {
+        get { return gameOver; }
+    }
+
+
     void Start() {
+        gameOver = false;
+        vidas = 4;
         enemigos = 0;
         neutralizados = 0;
         perdidos = 0;
-        vidas = 4;
-        play = true;
 
         nameGhost = "Ghost_";
         nameVida = "Vida_";
-        // LimpiarMarcadores();
 
         borderTop = board[0].position.y;
         borderRight = board[1].position.x;
@@ -43,7 +56,9 @@ public class GameManager : MonoBehaviour
     }
 
     // En cada frame
-    void Update() {
+    void Update()
+    {
+        if( GameOver ) { return; }
 
         if ( vidas > 0 ) {
             // Probabilidad del 0.001
@@ -58,15 +73,17 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        // Condición 1 para el GameOver (Vidas == 0)
         else {
-            FinJuego();
+            SetGameOver();
             // Parar toda la escena
             Time.timeScale = 0;
         }
     }
 
-    void InicioMarcador () {
-        // marcadorX = [-0.75f, -0.25f, 0.25f, 0.75f];
+    void InicioMarcador ()
+    {
+        // Enunciado marcadorX = [-0.75f, -0.25f, 0.25f, 0.75f];
 
         for ( int i = 0; i < vidas; i++ ) {
             Transform marcadorPoint = marcadorPoints[i];
@@ -79,8 +96,8 @@ public class GameManager : MonoBehaviour
     }
 
     // Método para instanciar un gosthPrefab
-    // en uno de los 5 neutralizados de espaneo al azar
-    private void SpawnGhost()
+    // en uno de los 5 SpawnPoints de espaneo al azar
+    void SpawnGhost()
     {
         // Random.Range devuelve un valor de un rango
         // que incluye el 1er parámetro [0]
@@ -133,7 +150,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void RestarVida() {
+    void RestarVida()
+    {
         vidas--;
         print("vidas: " + vidas );
 
@@ -143,17 +161,17 @@ public class GameManager : MonoBehaviour
         Destroy( vida );
     }
 
-    void ErrorEnemigo() {
+    void ErrorEnemigo()
+    {
         Debug.Log("Enemigo perdido");
     }
 
-    void FinJuego() {
-        // Quaternion rotacion = Quaternion.identity;
-        if ( play ) {
-            Instantiate( gameOverPrefab);
-            // Destroy( barrera );
-            play = false;
-        }
+    void SetGameOver()
+    {
+        Debug.Log( "GAME OVER" );
+        Instantiate( gameOverPrefab);
+
+        gameOver = true;
     }
 
     void OnGUI()
