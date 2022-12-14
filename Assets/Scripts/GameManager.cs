@@ -37,6 +37,12 @@ public class GameManager : MonoBehaviour
         get { return gameOver; }
     }
 
+    // Instancia pública para el patrón Singleton
+    public static GameManager instance;
+
+    void Awake() {
+        instance = this;
+    }
 
     void Start() {
         gameOver = false;
