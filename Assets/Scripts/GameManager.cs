@@ -82,8 +82,6 @@ public class GameManager : MonoBehaviour
         // Condición 1 para el GameOver (Vidas == 0)
         else {
             SetGameOver();
-            // Parar toda la escena
-            Time.timeScale = 0;
         }
     }
 

@@ -36,6 +36,8 @@ public class GhostScript : MonoBehaviour {
     // O sea, cada 20 ms o 0.02 segundos
     void FixedUpdate()
     {
+        if( GameManager.instance.GameOver ) { return; }
+
         // Dentro de este método Time.deltaTime = Time.fixedDeltaTime = 0.02
         Vector3 movement = velocity * Time.deltaTime;
         transform.position += movement;

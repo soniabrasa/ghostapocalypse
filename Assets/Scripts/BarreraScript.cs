@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class BarreraScript : MonoBehaviour
 {
-    private Rigidbody2D Rb;
-    private float vertical;
-    private float speed = 8f;
-    // private int Vidas;
-    private int puntos;
+    Rigidbody2D Rb;
+    float vertical;
+    float speed = 8f;
+    int puntos;
 
     void Start()
     {
@@ -19,11 +18,13 @@ public class BarreraScript : MonoBehaviour
 
     void Update()
     {
+        // Usando la instancia del patrón Singleton
+        if( GameManager.instance.GameOver ) { return; }
+
         vertical = Input.GetAxisRaw("Vertical") * speed;
     }
 
-    // FixedUpdate() es una función que se llama cada 20ms
-    private void FixedUpdate() {
+    void FixedUpdate() {
         Rb.velocity = new Vector2( Rb.velocity.x, vertical );
     }
 
