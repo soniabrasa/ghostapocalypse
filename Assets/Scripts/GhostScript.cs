@@ -36,6 +36,7 @@ public class GhostScript : MonoBehaviour {
     // O sea, cada 20 ms o 0.02 segundos
     void FixedUpdate()
     {
+        // Usando la instancia del patrón Singleton
         if( GameManager.instance.GameOver ) { return; }
 
         // Dentro de este método Time.deltaTime = Time.fixedDeltaTime = 0.02
@@ -58,18 +59,16 @@ public class GhostScript : MonoBehaviour {
     void OnTriggerEnter2D( Collider2D collision )
     {
         // bool player = collision.gameObject.tag == "Player";
-        BarreraScript player = collision.GetComponent<BarreraScript>();
+        BarreraScript barrera = collision.GetComponent<BarreraScript>();
 
-        if ( player != null ){
-            // Punto para el jugador
-            player.Hit();
+        if ( barrera != null ){
+            // Punto para la barrera
+            GameManager.instance.BarreraHit();
             velocity = Vector3.zero;
 
             Explotar();
         }
     }
-
-    void Hit() { }
 
     void Spawn() {
         audioSpawn = audioClips[0];

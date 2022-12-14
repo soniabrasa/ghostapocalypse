@@ -7,12 +7,9 @@ public class BarreraScript : MonoBehaviour
     Rigidbody2D Rb;
     float vertical;
     float speed = 8f;
-    int puntos;
 
     void Start()
     {
-        puntos = 0;
-
         Rb = GetComponent<Rigidbody2D>();
     }
 
@@ -26,17 +23,6 @@ public class BarreraScript : MonoBehaviour
 
     void FixedUpdate() {
         Rb.velocity = new Vector2( Rb.velocity.x, vertical );
-    }
-
-    public void Hit()
-    {
-        puntos++;
-        print("Neutralizados: " + puntos );
-        Puntuacion();
-    }
-
-    public int Puntuacion() {
-        return this.puntos;
     }
 
     void DestroyBarrera () {
