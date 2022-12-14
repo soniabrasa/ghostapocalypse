@@ -4,39 +4,56 @@ using UnityEngine;
 
 public class GhostScript : MonoBehaviour {
 
+    // Variables globales de tipo audio del prefab
     public AudioClip[] audioClips;
     AudioClip audioSpawn, audioBoom;
 
-    float speed = 6f;
+    // Variables físicas de velocidad del prefab
+    float speed;
     Vector3 velocity;
 
+    // Variable global del Animator del prefab
+    Animator animator;
+
+    // Setters de inicio de las variables globales
+    // Antes del primer frame (Inicio del play)
     void Start() {
+        speed = 6f;
         // Vector3.right = Vector3(1, 0, 0)
         velocity = Vector3.right * speed;
+
+        animator = GetComponent<Animator>();
 
         Spawn();
     }
 
+    // En cada frame ...
     void Update() {
 
     }
 
-    // FixedUpdate() es una función que se llama 50 veces/s de forma constante
+    // FixedUpdate() es una función que se llama 50 veces de forma Konstante
     // O sea, cada 20 ms o 0.02 segundos
     void FixedUpdate()
     {
         // Dentro de este método Time.deltaTime = Time.fixedDeltaTime = 0.02
         Vector3 movement = velocity * Time.deltaTime;
         transform.position += movement;
-
-        // PositionX();
     }
 
-    // public float PositionX() {
-    //     return this.transform.position.x;
+    // private void OnCollisionEnter2D( Collision2D other ) {
+    //     BarreraScript player = other.collider.GetComponent<BarreraScript>();
+    //
+    //     if ( player != null ) {
+    //         player.Hit();
+    //         Explotar();
+    //         velocity = Vector3.zero;
+    //     }
+    //
+    //     // DestroyGhost();
     // }
 
-    private void OnTriggerEnter2D( Collider2D collision )
+    void OnTriggerEnter2D( Collider2D collision )
     {
         // bool player = collision.gameObject.tag == "Player";
         BarreraScript player = collision.GetComponent<BarreraScript>();
@@ -44,25 +61,28 @@ public class GhostScript : MonoBehaviour {
         if ( player != null ){
             // Punto para el jugador
             player.Hit();
+            velocity = Vector3.zero;
 
             Explotar();
-            DestroyGhost();
         }
     }
 
     void Hit() { }
 
-    private void Spawn() {
+    void Spawn() {
         audioSpawn = audioClips[0];
         Camera.main.GetComponent<AudioSource>().PlayOneShot(audioSpawn);
     }
 
-    private void Explotar() {
+    void Explotar() {
+        // Transición a la animación Explosion
+        animator.SetBool("exploding", true);
+
         audioBoom = audioClips[1];
         Camera.main.GetComponent<AudioSource>().PlayOneShot(audioBoom);
     }
 
-    public void DestroyGhost() {
+    void DestroyGhost() {
         Destroy( gameObject );
     }
 }
