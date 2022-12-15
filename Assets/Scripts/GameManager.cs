@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    // Probando
+    public GameObject destino;
+
+
+
     // Los prefabs
     public GameObject ghostPrefab;
     public GameObject gameOverPrefab;
     public GameObject vidasPrefab;
+
 
     // El tablero de juego
     public Transform[] spawnPoints;
@@ -34,6 +40,11 @@ public class GameManager : MonoBehaviour
         get { return gameOver; }
     }
 
+    // Posiciones públicas del tablero
+    public Vector3 BarreraTop    { get { return board[0].position; } }
+    public Vector3 BoardRight    { get { return board[1].position; } }
+    public Vector3 BarreraBottom { get { return board[2].position; } }
+
     // Instancia pública para el patrón Singleton
     public static GameManager instance;
 
@@ -50,10 +61,6 @@ public class GameManager : MonoBehaviour
 
         nameGhost = "Ghost_";
         nameVida = "Vida_";
-
-        borderTop = board[0].position.y;
-        borderRight = board[1].position.x;
-        borderBottom = board[2].position.y;
 
         InicioMarcador ();
     }
@@ -138,7 +145,7 @@ public class GameManager : MonoBehaviour
 
                 // print( "Position X GhostClone_" + totalGhosts + ": " + x );
 
-                if ( x > borderRight ) {
+                if ( x > BoardRight.x ) {
                     ghostClones.RemoveAt(i);
                     Destroy( clon );
                     BarreraFlop();
@@ -158,7 +165,7 @@ public class GameManager : MonoBehaviour
         Destroy( vida );
     }
 
-    public void BarreraHit() {
+    public void BarreraPoints() {
         barreraPoints++;
     }
 

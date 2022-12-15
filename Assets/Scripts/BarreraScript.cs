@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class BarreraScript : MonoBehaviour
 {
-    Rigidbody2D Rb;
-    float vertical;
-    float speed = 8f;
+    Rigidbody2D rb;
+    float speed, verticalInput;
+
+    // Límites del movimiento vertical del GameManager
+    float minY, maxY;
 
     void Start()
     {
-        Rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
+        speed = 8f;
+
+        minY = GameManager.instance.BarreraBottom.y;
+        maxY = GameManager.instance.BarreraTop.y;
     }
 
     void Update()
@@ -18,11 +24,20 @@ public class BarreraScript : MonoBehaviour
         // Usando la instancia del patrón Singleton
         if( GameManager.instance.GameOver ) { return; }
 
-        vertical = Input.GetAxisRaw("Vertical") * speed;
+        verticalInput = Input.GetAxisRaw("Vertical") * speed;
+
+        if ( verticalInput != 0 ) {
+            Vector3 tmpPosition = transform.position;
+            // El método Clamp() de Mathf está muy chulo
+            // Limita la posición x/y/z entre  un mínimo y un máximo
+            tmpPosition.y = Mathf.Clamp( tmpPosition.y, minY, maxY );
+
+            transform.position = tmpPosition;
+        }
     }
 
     void FixedUpdate() {
-        Rb.velocity = new Vector2( Rb.velocity.x, vertical );
+        rb.velocity = new Vector2( rb.velocity.x, verticalInput );
     }
 
     void DestroyBarrera () {
