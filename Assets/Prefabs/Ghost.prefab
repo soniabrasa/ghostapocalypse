@@ -170,3 +170,5 @@ MonoBehaviour:
   audioClips:
   - {fileID: 8300000, guid: 53d4232de21f0dc2bbc15189045791f6, type: 3}
   - {fileID: 8300000, guid: 497c95967e28b02a6992d3d587140f57, type: 3}
+  points100Prefab: {fileID: 4807379860934935177, guid: ba57ca8ebe8fd838197e9b0d087a19de, type: 3}
+  points150Prefab: {fileID: 7305748112741299970, guid: e6b0436798b946c96b6795b2e48158b7, type: 3}

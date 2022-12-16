@@ -4,30 +4,25 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Probando
-    public GameObject destino;
-
-
-
     // Los prefabs
     public GameObject ghostPrefab;
     public GameObject gameOverPrefab;
-    public GameObject vidasPrefab;
-
+    public GameObject healthPrefab;
 
     // El tablero de juego
     public Transform[] spawnPoints;
-    public Transform[] marcadorPoints;
+    public Transform[] scoreHealth;
     public Transform[] board;
 
     // Los clones de prefabs
     GameObject ghostClone;
-    GameObject vidaClone;
+    GameObject healthClone;
     List<GameObject> ghostClones = new List<GameObject>();
-    string nameGhost, nameVida;
+    string nameGhost, nameHealth;
 
     // Marcadores
-    int totalGhosts, barreraPoints, perdidos, vidasBarrera;
+    public ScorePointsSc scorePoints;
+    int totalGhosts, barreraPoints, healthCount;
 
     // Bordes del tablero
     float borderTop, borderRight, borderBottom;
@@ -53,16 +48,12 @@ public class GameManager : MonoBehaviour
     }
 
     void Start() {
-        gameOver = false;
-        vidasBarrera = 4;
-        totalGhosts = 0;
-        barreraPoints = 0;
-        perdidos = 0;
+        scorePoints.Display(0);
 
         nameGhost = "Ghost_";
-        nameVida = "Vida_";
+        nameHealth = "Health_";
 
-        InicioMarcador ();
+        InitGame ();
     }
 
     // En cada frame
@@ -70,7 +61,7 @@ public class GameManager : MonoBehaviour
     {
         if( GameOver ) { return; }
 
-        if ( vidasBarrera > 0 ) {
+        if ( healthCount > 0 ) {
             // Probabilidad del 0.001
             if ( Random.Range(0f, 1f) < 0.001f ) {
                 SpawnGhost();
@@ -85,17 +76,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void InicioMarcador ()
+    void InitGame ()
     {
+        gameOver = false;
+        healthCount = 4;
+        totalGhosts = 0;
+        barreraPoints = 0;
+
         // Enunciado marcadorX = [-0.75f, -0.25f, 0.25f, 0.75f];
 
-        for ( int i = 0; i < vidasBarrera; i++ ) {
-            Transform marcadorPoint = marcadorPoints[i];
-            Vector3 posicion = marcadorPoint.position;
+        for ( int i = 0; i < healthCount; i++ ) {
+            Transform healthPoint = scoreHealth[i];
+            Vector3 posicion = healthPoint.position;
             Quaternion rotacion = Quaternion.identity;
 
-            vidaClone = Instantiate( vidasPrefab, posicion, rotacion );
-            vidaClone.name = nameVida + i;
+            healthClone = Instantiate( healthPrefab, posicion, rotacion );
+            healthClone.name = nameHealth + i;
         }
     }
 
@@ -156,22 +152,20 @@ public class GameManager : MonoBehaviour
 
     void BarreraFlop()
     {
-        vidasBarrera--;
-        print("Vidas restantes: " + vidasBarrera );
+        healthCount--;
+        print("Vidas restantes: " + healthCount );
 
-        string vidaPrefabName = nameVida + vidasBarrera;
+        string healthPrefabName = nameHealth + healthCount;
 
-        GameObject vida = GameObject.Find(vidaPrefabName);
-        Destroy( vida );
+        GameObject health = GameObject.Find(healthPrefabName);
+        Destroy( health );
     }
 
-    public void BarreraPoints() {
-        barreraPoints++;
-    }
+    public void BarreraPoints( int points ) {
+        barreraPoints += points;
 
-    void ErrorEnemigo()
-    {
-        Debug.Log("Enemigo perdido");
+        print( "Marcador barrera: " + barreraPoints );
+        scorePoints.Display( barreraPoints );
     }
 
     void SetGameOver()
@@ -191,15 +185,11 @@ public class GameManager : MonoBehaviour
         );
 
         GUI.Label( new Rect(400, 1000, 500, 100),
-            "Neutralizados: " + barreraPoints
-        );
-
-        GUI.Label( new Rect(800, 1000, 500, 100),
-            "Perdidos: " + perdidos
+            "Puntuación: " + barreraPoints
         );
 
         GUI.Label( new Rect(1500, 1000, 500, 100),
-            "Vidas: " + vidasBarrera
+            "Vidas: " + healthCount
         );
     }
 }

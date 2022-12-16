@@ -12,18 +12,16 @@ public class GhostScript : MonoBehaviour {
     float speed;
     Vector3 velocity;
 
+    // El prefab tiene varias puntuaciones
+    public GameObject points100Prefab;
+    public GameObject points150Prefab;
     int points;
 
-    // Setters de inicio de las variables globales
-    // Antes del primer frame (Inicio del play)
     void Start() {
         speed = 6f;
 
         // Puntuación por defecto
         points = 100;
-
-        float destinoMinY;
-        float destinoMaxY;
 
         // Vector3.right = Vector3(1, 0, 0) de magnitud 1
         velocity = Vector3.right * speed;
@@ -45,10 +43,7 @@ public class GhostScript : MonoBehaviour {
         Spawn();
     }
 
-    // En cada frame ...
-    void Update() {
-
-    }
+    void Update() { }
 
     // FixedUpdate() es una función que se llama 50 veces de forma Konstante
     // O sea, cada 20 ms o 0.02 segundos
@@ -80,12 +75,24 @@ public class GhostScript : MonoBehaviour {
         BarreraScript barrera = collision.GetComponent<BarreraScript>();
 
         if ( barrera != null ){
-            // Punto para la barrera
-            GameManager.instance.BarreraPoints();
-            velocity = Vector3.zero;
-
-            Explotar();
+            Die();
         }
+    }
+
+    public void Die() {
+        // Stop
+        velocity = Vector3.zero;
+
+        // Puntos para la barrera
+        GameManager.instance.BarreraPoints( points );
+
+        if( points == 100 ) {
+            Instantiate(points100Prefab, transform.position + Vector3.up, Quaternion.identity);
+        } else {
+            Instantiate(points150Prefab, transform.position + Vector3.up, Quaternion.identity);
+        }
+
+        Explotar();
     }
 
     Vector3 DiagonalDirection () {
