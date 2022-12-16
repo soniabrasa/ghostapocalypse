@@ -79,6 +79,8 @@ public class GameManager : MonoBehaviour
         else {
             SetGameOver();
         }
+
+        if ( Input.GetKeyDown(KeyCode.Space) ) { SuperPower(); }
     }
 
     void InitGame ()
@@ -178,6 +180,19 @@ public class GameManager : MonoBehaviour
 
         print( "Marcador barrera: " + barreraPoints );
         scorePoints.Display( barreraPoints );
+    }
+
+    void SuperPower() {
+        // foreach ( GameObject go in ghostClones ) {
+        //     go.GetComponent<GhostScript>().Die();
+        // }
+        for ( int i=0; i < ghostClones.Count; i++ ) {
+            GameObject go = ghostClones[i];
+
+            if ( go != null ) {
+                go.GetComponent<GhostScript>().Die();
+            }
+        }
     }
 
     void SetGameOver()
