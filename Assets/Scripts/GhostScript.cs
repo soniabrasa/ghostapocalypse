@@ -12,17 +12,59 @@ public class GhostScript : MonoBehaviour {
     float speed;
     Vector3 velocity;
 
-    // Variable global del Animator del prefab
-    Animator animator;
+    int points;
 
     // Setters de inicio de las variables globales
     // Antes del primer frame (Inicio del play)
     void Start() {
         speed = 6f;
-        // Vector3.right = Vector3(1, 0, 0)
+
+        // Puntuación por defecto
+        points = 100;
+
+        float destinoMinY;
+        float destinoMaxY;
+
+        // Vector3.right = Vector3(1, 0, 0) de magnitud 1
         velocity = Vector3.right * speed;
 
-        animator = GetComponent<Animator>();
+        // Cada fantasma podrá decidir moverse oblicuamente
+        // con una probabilidad de 0.1.
+        if( Random.Range( 0f, 1f ) <= 0.9f ) {
+
+            // el pivote del fantasma oblicuo debe estar entre los límites
+            // inferior y superior alcanzables por el cuerpo de la barrera
+            // Su velocidad de desplazamiento seguirá siendo la misma
+
+            // Altura del fantasma
+            float hGhost = transform.localScale.y;
+
+            // Eje x de la Barrera
+            float toPosX = GameManager.instance.BarreraTop.x;
+
+            // Límites de la Barrera +/- la altura del fantasma
+            float toMinPosY = GameManager.instance.BarreraBottom.y - hGhost;
+            float toMaxPosY = GameManager.instance.BarreraTop.y + hGhost;
+
+            // Punto aleatorio en los límites del eje Y de la barrera
+            float randomPosY = Random.Range( toMinPosY, toMaxPosY );
+
+            // Vector de posición de destino calculado aleatoriamente
+            Vector3 toPoint = new Vector3( toPosX, randomPosY, 0 );
+
+            // La resta de vectores obtiene un vector que va
+            // desde la posición actual a la posición de destino
+            Vector3 velocityDirection = toPoint - transform.position;
+
+            // Normalizando la magnitud a 1
+            velocityDirection.Normalize();
+
+            // Aplicando la misma velocidad al vector normalizado
+            velocity = velocityDirection * speed;
+
+            // Puntuación de 150 para los fantasmas que se mueven en diagonal.
+            points = 150;
+        }
 
         Spawn();
     }
@@ -63,7 +105,7 @@ public class GhostScript : MonoBehaviour {
 
         if ( barrera != null ){
             // Punto para la barrera
-            GameManager.instance.BarreraHit();
+            GameManager.instance.BarreraPoints();
             velocity = Vector3.zero;
 
             Explotar();
@@ -77,6 +119,7 @@ public class GhostScript : MonoBehaviour {
 
     void Explotar() {
         // Transición a la animación Explosion
+        Animator animator = GetComponent<Animator>();
         animator.SetBool("exploding", true);
 
         audioBoom = audioClips[1];
