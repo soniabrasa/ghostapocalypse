@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     // Los clones de prefabs
     GameObject ghostClone;
     GameObject healthClone;
+    GameObject gameOverClone;
     List<GameObject> ghostClones = new List<GameObject>();
     string nameGhost, nameHealth;
 
@@ -48,8 +49,6 @@ public class GameManager : MonoBehaviour
     }
 
     void Start() {
-        scorePoints.Display(0);
-
         nameGhost = "Ghost_";
         nameHealth = "Health_";
 
@@ -59,7 +58,13 @@ public class GameManager : MonoBehaviour
     // En cada frame
     void Update()
     {
-        if( GameOver ) { return; }
+        if( GameOver ) {
+            // al pulsar la tecla F1 se iniciará una nueva partida.
+            if ( Input.GetKeyDown(KeyCode.F1) ) {
+                InitGame();
+            }
+            return;
+        }
 
         if ( healthCount > 0 ) {
             // Probabilidad del 0.001
@@ -82,6 +87,13 @@ public class GameManager : MonoBehaviour
         healthCount = 4;
         totalGhosts = 0;
         barreraPoints = 0;
+        scorePoints.Display(0);
+
+        if ( gameOverClone != null ) {
+            Destroy( gameOverClone );
+        }
+
+        DestroyAllGhosts();
 
         // Enunciado marcadorX = [-0.75f, -0.25f, 0.25f, 0.75f];
 
@@ -171,10 +183,18 @@ public class GameManager : MonoBehaviour
     void SetGameOver()
     {
         Debug.Log( "GAME OVER" );
-        Instantiate( gameOverPrefab);
+        gameOverClone = Instantiate( gameOverPrefab);
 
         gameOver = true;
     }
+
+    void DestroyAllGhosts() {
+        foreach ( GameObject go in ghostClones ) {
+            Destroy( go );
+        }
+        ghostClones.Clear();
+    }
+
 
     void OnGUI()
     {
